@@ -1,25 +1,34 @@
-// Multiple Reducer
+import { combineReducers, createStore } from 'redux';
 
-import { createStore } from 'redux';
+const userReducer = (state={}, action) => {
+    switch (action.type) {
+        case "CHANGE_NAME": {
+            state = {...state, name: action.payload}
+            break;
+        }
+        case "CHANGE_AGE": {
+            state = {...state, age: action.payload}
+            break;
+        }
+    }
+    return state;
+};
 
-const reducer = function(state, action) {
-    if(action.type == "INC") {
-        return state+action.payload;
-    }
-    if(action.type == "DEC") {
-        return state-action.payload;
-    }
+const tweetsReducer = (state=[], action) => {
     return state;
 }
 
-const store = createStore(reducer, 0);
+const reducers = combineReducers({
+    user: userReducer,
+    tweets: tweetsReducer
+})
+
+const store = createStore(reducers);
 
 store.subscribe(() => {
     console.log("Store changed", store.getState());
 })
 
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "DEC", payload: 15});
+store.dispatch({type: "CHANGE_NAME", payload: "Kus"});
+store.dispatch({type: "CHANGE_AGE", payload: 21});
+store.dispatch({type: "CHANGE_AGE", payload: 22});
