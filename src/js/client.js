@@ -27,7 +27,7 @@ const error = (store) => (next) => (action) => {
 
 const middleware = applyMiddleware(logger, error);
 
-const store = createStore(reducer, 1, middleware);
+const store = createStore(reducer, 0, middleware);
 
 store.subscribe(() => {
     console.log("Store changed", store.getState());
