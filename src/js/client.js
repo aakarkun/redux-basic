@@ -1,41 +1,50 @@
 import { applyMiddleware, createStore } from 'redux';
 
-const reducer = function(state, action) {
-    if(action.type === "INC") {
-        return state+action.payload;
+import axios from 'axios';
+import logger from 'redux-logger';
+import thunk from 'redux-thunk';
+
+const initialState = {
+    fetching: false,
+    fetched: false,
+    users: [],
+    error: null
+}
+
+const reducer = (state = initialState, action) => {
+    switch (action.type) {
+        case "FETCH_USER_START": {
+            return {...state, fetching: true}
+            break;
+        }
+        case "RECEIVE_USERS": {
+            return {...state, fetching: false, fetched: true, users: action.payload}
+            break;
+        }
+        case "FETCH_USERS_ERROR": {
+            return {...state, fetching: false, error: action.payload}
+            break;
+        }
     }
-    if(action.type === "DEC") {
-        return state-action.payload;
-    } else if(action.type === "E") {
-        throw new Error("Error!");
-    }
+    
     return state;
 }
 
-const logger = (store) => (next) => (action) => {
-    console.log("action fired", action);
-    next(action);
-}
+const middleware = applyMiddleware(thunk, logger());
 
-const error = (store) => (next) => (action) => {
-    try {
-        next(action);
-    } catch(e) {
-        console.log("Oops!", e);
-    }
-}
-
-const middleware = applyMiddleware(logger, error);
-
-const store = createStore(reducer, 1, middleware);
+const store = createStore(reducer, middleware);
 
 store.subscribe(() => {
     console.log("Store changed", store.getState());
 })
 
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "INC", payload: 5});
-store.dispatch({type: "DEC", payload: 15});
-store.dispatch({type: "E", payload: 15});
+store.dispatch((dispatch) => {
+    dispatch({type: "FETCH_USER_START"})
+    axios.get("https://jsonplaceholder.typicode.com/users")
+        .then((response) => {
+            dispatch({type:"RECEIVE_USERS", payload: response.data})
+        })
+        .catch((err) =>{
+            dispatch({type: "FETCH_USERS_ERROR", payload: err})
+        })
+});
