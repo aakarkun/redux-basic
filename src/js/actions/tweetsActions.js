@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export function fetchTweets() {
-  return function dispatch() {
+  return function (dispatch) {
     dispatch({type: "FETCH_TWEETS"})
     axios.get("http://rest.learncode.academy/api/reacttest/tweets")
     .then((response) => {
