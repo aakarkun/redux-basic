@@ -15,6 +15,12 @@ const userReducer = (state={}, action) => {
 };
 
 const tweetsReducer = (state=[], action) => {
+    switch (action.type) {
+        case "CHANGE_TWEETS": {
+            state = {...state, tweet: action.payload}
+            break;
+        }
+    }
     return state;
 }
 
@@ -32,3 +38,4 @@ store.subscribe(() => {
 store.dispatch({type: "CHANGE_NAME", payload: "Kus"});
 store.dispatch({type: "CHANGE_AGE", payload: 21});
 store.dispatch({type: "CHANGE_AGE", payload: 22});
+store.dispatch({type: "CHANGE_TWEETS", payload: "This is my first tweet!"});
