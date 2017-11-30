@@ -19,7 +19,7 @@ const reducer = (state = initialState, action) => {
             break;
         }
         case "FETCH_USERS_FULFILLED": {
-            return {...state, fetching: false, fetched: true, users: action.payload}
+            return {...state, fetching: false, fetched: true, users: action.payload.data}
             break;
         }
         case "FETCH_USERS_REJECTED": {
@@ -39,18 +39,20 @@ store.subscribe(() => {
     console.log("Store changed", store.getState());
 })
 
+// using redux promise middleware
 store.dispatch({
     type: "FETCH_USERS",
     payload: axios.get("https://jsonplaceholder.typicode.com/users")
 });
 
+// without using redux promise middleware
 // store.dispatch((dispatch) => {
-//     dispatch({type: "FETCH_USER_START"})
+//     dispatch({type: "FETCH_USERS_PENDING"})
 //     axios.get("https://jsonplaceholder.typicode.com/users")
 //         .then((response) => {
-//             dispatch({type:"RECEIVE_USERS", payload: response.data})
+//             dispatch({type:"FETCH_USERS_FULFILLED", payload: response})
 //         })
 //         .catch((err) =>{
-//             dispatch({type: "FETCH_USERS_ERROR", payload: err})
+//             dispatch({type: "FETCH_USERS_REJECTED", payload: err})
 //         })
 // });
