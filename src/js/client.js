@@ -3,8 +3,7 @@ import { applyMiddleware, createStore } from 'redux';
 const reducer = function(state, action) {
     if(action.type === "INC") {
         return state+action.payload;
-    }
-    if(action.type === "DEC") {
+    } else if(action.type === "DEC") {
         return state-action.payload;
     } else if(action.type === "E") {
         throw new Error("Error!");
